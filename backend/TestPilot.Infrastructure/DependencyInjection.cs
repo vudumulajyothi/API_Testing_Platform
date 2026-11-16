@@ -1,0 +1,29 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using TestPilot.Application.Interfaces;
+using TestPilot.Infrastructure.Data;
+
+namespace TestPilot.Infrastructure;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("DefaultConnection") 
+            ?? "Server=(localdb)\\mssqllocaldb;Database=TestPilotDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+        services.AddDbContext<TestPilotDbContext>(options =>
+            options.UseSqlServer(connectionString, b => b.MigrationsAssembly(typeof(TestPilotDbContext).Assembly.FullName)));
+
+        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<TestPilotDbContext>());
+
+        // HTTP Client Factory
+        services.AddHttpClient("TestPilotClient", client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+
+        return services;
+    }
+}
