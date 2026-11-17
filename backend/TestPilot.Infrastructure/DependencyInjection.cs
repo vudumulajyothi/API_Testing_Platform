@@ -19,15 +19,18 @@ public static class DependencyInjection
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<TestPilotDbContext>());
 
-        // Security & Token generation
+        // Security, Token Generation & SSRF
         services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<ISsrfProtectionService, SsrfProtectionService>();
 
-        // HTTP Client Factory
+        // HTTP Client & Execution Engine
         services.AddHttpClient("TestPilotClient", client =>
         {
             client.Timeout = TimeSpan.FromSeconds(30);
         });
+
+        services.AddScoped<IRequestExecutionService, RequestExecutionService>();
 
         return services;
     }
