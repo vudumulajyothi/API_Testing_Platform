@@ -13,6 +13,9 @@ public static class DependencyInjection
         services.AddScoped<IApiRequestService, ApiRequestService>();
         services.AddSingleton<IAssertionEvaluator, AssertionEvaluator>();
         services.AddScoped<ITestRunnerService, TestRunnerService>();
+        services.AddScoped<IHistoryService, HistoryService>();
+        services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IDocumentationExportService, DocumentationExportService>();
         return services;
     }
 }
