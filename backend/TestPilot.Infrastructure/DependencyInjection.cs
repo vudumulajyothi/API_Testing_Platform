@@ -11,11 +11,21 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection") 
-            ?? "Server=(localdb)\\mssqllocaldb;Database=TestPilotDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+        var useInMemory = configuration.GetValue<bool>("UseInMemoryDatabase");
 
-        services.AddDbContext<TestPilotDbContext>(options =>
-            options.UseSqlServer(connectionString, b => b.MigrationsAssembly(typeof(TestPilotDbContext).Assembly.FullName)));
+        if (useInMemory)
+        {
+            services.AddDbContext<TestPilotDbContext>(options =>
+                options.UseInMemoryDatabase("TestPilotDevDb"));
+        }
+        else
+        {
+            var connectionString = configuration.GetConnectionString("DefaultConnection") 
+                ?? "Server=(localdb)\\mssqllocaldb;Database=TestPilotDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            services.AddDbContext<TestPilotDbContext>(options =>
+                options.UseSqlServer(connectionString, b => b.MigrationsAssembly(typeof(TestPilotDbContext).Assembly.FullName)));
+        }
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<TestPilotDbContext>());
 

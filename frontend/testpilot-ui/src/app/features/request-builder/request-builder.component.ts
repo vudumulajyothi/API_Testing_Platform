@@ -1,14 +1,15 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiService } from '../../../core/services/api.service';
-import { ExecuteRequest, ExecuteResponse, HttpMethod, KeyValuePair } from '../../../core/models/api-request.model';
-import { Collection, SavedApiRequest } from '../../../core/models/collection.model';
+import { RouterModule } from '@angular/router';
+import { ApiService } from '../../core/services/api.service';
+import { ExecuteRequest, ExecuteResponse, HttpMethod, KeyValuePair } from '../../core/models/api-request.model';
+import { Collection, SavedApiRequest } from '../../core/models/collection.model';
 
 @Component({
   selector: 'app-request-builder',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   template: `
     <div class="request-builder-layout">
       <!-- Left Sidebar: Collections & Saved Requests -->
@@ -147,8 +148,8 @@ import { Collection, SavedApiRequest } from '../../../core/models/collection.mod
                 <div class="empty-state">
                   <p>Executing HTTP request...</p>
                 </div>
-              } @else if (response(); as res) {
-                <pre class="response-body code-font">{{ res.body | json }}</pre>
+              } @else if (response()) {
+                <pre class="response-body code-font">{{ response()?.body | json }}</pre>
               } @else {
                 <div class="empty-state">
                   <p>Enter an endpoint URL and hit <strong>Send</strong> to view results.</p>

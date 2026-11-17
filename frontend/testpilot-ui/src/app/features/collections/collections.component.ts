@@ -1,8 +1,8 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ApiService } from '../../../core/services/api.service';
-import { Collection } from '../../../core/models/collection.model';
+import { ApiService } from '../../core/services/api.service';
+import { Collection } from '../../core/models/collection.model';
 
 @Component({
   selector: 'app-collections',
@@ -84,7 +84,7 @@ import { Collection } from '../../../core/models/collection.model';
         }
       }
       .card-footer {
-        display: flex; justify-content: space-between; align-items: center; margin-top: 20px; pt-2;
+        display: flex; justify-content: space-between; align-items: center; margin-top: 20px;
         border-top: 1px solid var(--border-color);
         padding-top: 12px;
         .request-count { font-size: 12px; color: var(--text-muted); font-family: var(--font-code); }
