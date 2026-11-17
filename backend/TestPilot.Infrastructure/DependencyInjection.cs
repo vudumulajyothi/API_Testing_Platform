@@ -32,6 +32,9 @@ public static class DependencyInjection
 
         services.AddScoped<IRequestExecutionService, RequestExecutionService>();
 
+        // AI Test Suggestion Service
+        services.AddScoped<IAiSuggestionService, AiSuggestionService>();
+
         return services;
     }
 }
