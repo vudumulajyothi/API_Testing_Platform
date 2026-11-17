@@ -11,6 +11,8 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ICollectionService, CollectionService>();
         services.AddScoped<IApiRequestService, ApiRequestService>();
+        services.AddSingleton<IAssertionEvaluator, AssertionEvaluator>();
+        services.AddScoped<ITestRunnerService, TestRunnerService>();
         return services;
     }
 }
