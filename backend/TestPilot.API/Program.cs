@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TestPilot.API.Middleware;
+using TestPilot.Application;
 using TestPilot.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Add Infrastructure and Application Services
+builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // 2. Configure Controllers and JSON Serialization
