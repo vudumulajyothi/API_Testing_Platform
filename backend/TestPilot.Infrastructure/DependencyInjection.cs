@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TestPilot.Application.Interfaces;
 using TestPilot.Infrastructure.Data;
+using TestPilot.Infrastructure.Services;
 
 namespace TestPilot.Infrastructure;
 
@@ -18,11 +19,21 @@ public static class DependencyInjection
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<TestPilotDbContext>());
 
-        // HTTP Client Factory
+        // Security, Token Generation & SSRF
+        services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<ISsrfProtectionService, SsrfProtectionService>();
+
+        // HTTP Client & Execution Engine
         services.AddHttpClient("TestPilotClient", client =>
         {
             client.Timeout = TimeSpan.FromSeconds(30);
         });
+
+        services.AddScoped<IRequestExecutionService, RequestExecutionService>();
+
+        // AI Test Suggestion Service
+        services.AddScoped<IAiSuggestionService, AiSuggestionService>();
 
         return services;
     }
