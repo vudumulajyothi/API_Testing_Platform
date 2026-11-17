@@ -22,7 +22,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unhandled exception occurred: {Message}", ex.Message);
+            _logger.LogError(ex, "Exception handled by middleware: {Message}", ex.Message);
             await HandleExceptionAsync(context, ex);
         }
     }
@@ -30,13 +30,23 @@ public class ExceptionHandlingMiddleware
     private static Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/problem+json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+        var (statusCode, title) = exception switch
+        {
+            UnauthorizedAccessException => (HttpStatusCode.Unauthorized, "Unauthorized"),
+            ArgumentException => (HttpStatusCode.BadRequest, "Validation Error"),
+            InvalidOperationException => (HttpStatusCode.BadRequest, "Operation Not Allowed"),
+            KeyNotFoundException => (HttpStatusCode.NotFound, "Resource Not Found"),
+            _ => (HttpStatusCode.InternalServerError, "An unexpected server error occurred.")
+        };
+
+        context.Response.StatusCode = (int)statusCode;
 
         var problemDetails = new
         {
-            type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-            title = "An unexpected error occurred processing your request.",
-            status = context.Response.StatusCode,
+            type = $"https://httpstatuses.com/{(int)statusCode}",
+            title,
+            status = (int)statusCode,
             detail = exception.Message,
             instance = context.Request.Path.Value
         };
